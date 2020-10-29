@@ -7,7 +7,8 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtGui import QPixmap
+
+from PyQt5 import QtWebEngineWidgets
 import cardcredit as cc
 
 
@@ -122,6 +123,26 @@ class Ui_MainWindow(object):
 #-----------------------------------------------------------------------        
         
         
+        self.tab_4 = QtWidgets.QWidget()
+        self.tab_4.setObjectName("tab_4")
+        self.tabWidget.addTab(self.tab_4, "")
+        self.webEngineView = QtWebEngineWidgets.QWebEngineView(self.tab_4)
+        self.webEngineView.setGeometry(QtCore.QRect(30, 190, 601, 341))
+        local_url = QtCore.QUrl.fromLocalFile(r'C:\Users\User\Anaconda3\ForensicProject\index.html')
+        self.webEngineView.load(local_url)
+        self.webEngineView.setObjectName("webEngineView")
+        
+        
+
+        self.lbl_Amazon = QtWidgets.QLabel(self.tab_4)
+        self.lbl_Amazon.setGeometry(QtCore.QRect(200, 40, 251, 21))
+        self.lbl_Amazon.setObjectName("lbl_Amazon")
+       
+        
+        
+#-----------------------------------------------------------------------                
+        
+        
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
@@ -171,6 +192,16 @@ class Ui_MainWindow(object):
          self.textBrowser_2.append('<img src="%s" />' %getGraph[2])
          self.textBrowser_2.append('<img src="%s" />' %getGraph[3])
          
+         
+    def enterWeb(self):
+        websiteURL=self.WebsiteLine.text()
+        #self.webEngineView.setUrl(QtCore.QUrl(websiteURL))
+        
+       
+        local_url = QtCore.QUrl.fromLocalFile(r'C:\Users\User\Anaconda3\ForensicProject\index.html')
+        self.webEngineView.load(local_url)
+        
+         
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
@@ -198,6 +229,8 @@ class Ui_MainWindow(object):
         self.browseCSVbtn.setText(_translate("MainWindow", "Browse..."))
         self.btn_ShowReport.setText(_translate("MainWindow", "Submit"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("MainWindow", "Fraud Detection"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _translate("MainWindow", "Website "))
+        self.lbl_Amazon.setText(_translate("MainWindow", "Amazon Credit Card Face Recognition"))
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
