@@ -1,6 +1,6 @@
 import sys
 from scapy.all import *
-from scapy.all import IP, TCP, DNS, DNSQR
+from scapy.all import IP, TCP
 from scapy.utils import *
 
 #rdpcap from scapy and load in pcap file
@@ -30,25 +30,22 @@ def src_dst(src,dst):
             if IP in packet:
                 print (packet[IP].src, packet[IP].dst)
 
-def packet_raw():
+def packet_raw(value):
+    print (hexdump(pkt[value][Raw].load))
+
+    '''
     for packet in pkt:
         if packet.getlayer(Raw):
             print ('[+] Found Raw' + '\n')
             l = packet.getlayer(Raw)
             rawr = Raw(l)
             hexdump(rawr)
-
-
-for packet in pkt:
-    if DNSQR in packet:
-        if packet[DNS].id == 0x1eef:
-            data = packet[DNS][6423].rdata
-            print (data)
+            '''    
 
 #packet_summary()
-#packet_option(82)
-#packet_show(6423)
+#packet_option(11815)
+#packet_show(11815)
 #packet_proto(82)
-#src_dst("10.0.2.3","10.0.2.15")
+#src_dst("192.168.3.131","209.17.73.30")
 #src_dst(0,0)
-#packet_raw()
+#packet_raw(11815)
