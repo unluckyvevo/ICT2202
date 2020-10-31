@@ -13,6 +13,7 @@ import cardcredit as cc
 import pcap as pc
 import boto3
 import json
+import ipaddress
 fDec = boto3.client('frauddetector')
 
 filenameCSV=None
@@ -242,6 +243,15 @@ class Ui_MainWindow(object):
         self.file_path_line.setText(pcap_path[0])
         
         
+        
+        
+    def is_ipv4(string):
+        try:
+            ipaddress.IPv4Network(string)
+            return True
+        except ValueError:
+            return False
+    
     def submitPCAP(self):
         summary=0
         pOption=0
@@ -254,7 +264,7 @@ class Ui_MainWindow(object):
             summary=1
        
         
-        if(self.checkBox_SrcDest.isChecked()):
+        if(self.checkBox_SinglePkt.isChecked()):
             pOption=1
             if(self.radioButton_Yes.isChecked()):
                 pOption2=0
@@ -263,14 +273,18 @@ class Ui_MainWindow(object):
             else:
                 pOption2=2
        
-        
+        #10.0.2.15
         if(self.checkBox_SrcDest.isChecked()):
             cbx_SD=1
-            if(self.lineEdit_SourceIP.text() is None):
+            tempSrc=self.lineEdit_SourceIP.text()
+            
+            print(self.lineEdit_SourceIP.text())
+            if((Ui_MainWindow.is_ipv4(tempSrc)) is False):
                 sIP=0
             else:
-                sIP=lineEdit_SourceIP.text()
-            if(self.lineEdit_DestIP.text() is None):
+                sIP=self.lineEdit_SourceIP.text()
+                
+            if((Ui_MainWindow.is_ipv4(self.lineEdit_DestIP.text())) is False):
                 dIP=0
             else:
                 dIP=self.lineEdit_DestIP.text()
@@ -286,12 +300,11 @@ class Ui_MainWindow(object):
         test=pc.Pkts.getPCAPInfo(self.file_path_line.text(),summary,pOption,pOption2,
                                  self.lineEdit_singlePacketNo.text(),cbx_SD,sIP,dIP)
         
-        print("Hi")
+      
         
         for i in range(0,len(test)):
-             print("jj")
-             self.textBrowser_PCAP.append(test[i])
-        
+             self.textBrowser_PCAP.append(str(test[i]))
+            
         
         
         
