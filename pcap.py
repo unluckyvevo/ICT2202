@@ -143,7 +143,7 @@ class Pkts:
                  
 #packet_summary()
 #pkter= rdpcap(r'smallFlows.pcap')
-Pkts.packet_option(pkter,8132)
+#Pkts.packet_option(pkter,8132)
 #packet_show(11815)
 #packet_proto(82)
 #src_dst("192.168.3.131","209.17.73.30")
