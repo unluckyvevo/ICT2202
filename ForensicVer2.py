@@ -196,7 +196,7 @@ class Ui_MainWindow(object):
         
         
         self.textBrowser_2 = QtWidgets.QTextBrowser(self.tab_3)
-        self.textBrowser_2.setGeometry(QtCore.QRect(10, 140, 671, 401))
+        self.textBrowser_2.setGeometry(QtCore.QRect(10, 140, 781, 401))
         self.textBrowser_2.setObjectName("textBrowser_2")
         self.tabWidget.addTab(self.tab_3, "")
         self.textBrowser_2.document().setDefaultFont(QtGui.QFont('Fonospace'))
@@ -304,11 +304,7 @@ class Ui_MainWindow(object):
         
         for i in range(0,len(test)):
              self.textBrowser_PCAP.append(str(test[i]))
-            
-        
-        
-        
-        
+  
         
     def on_browse(self):
        filename=QtWidgets.QFileDialog.getOpenFileName(None, 'Single File', '', '*.txt')
@@ -387,9 +383,7 @@ class Ui_MainWindow(object):
          jsonList = json.load(f)
          faggot=jsonList['scores']
          print(faggot)
-        
-        
-         
+                 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
