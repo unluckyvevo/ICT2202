@@ -2,9 +2,9 @@
 import os
 from datetime import *
 import subprocess
+
 subprocess.call([r'C:\Users\User\FOLDERS\SIT\yr2\2202\proj\GetFileInfo.bat'])
-# Enter birth dates and store
-# into date class objects
+
 d1, m1, y1 = [int(x) for x in input("Enter date of first"
                                     " file(DD/MM/YYYY) : ").split('/')]
 
@@ -16,7 +16,7 @@ d2, m2, y2 = [int(x) for x in input("Enter date of second"
 
 b2 = date(y2, m2, d2)
 
-# Check the dates
+# Compare the dates
 if b1 == b2:
     print("Both files are of equal age")
 

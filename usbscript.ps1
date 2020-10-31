@@ -3,11 +3,10 @@ Get-Disk | Where-Object -FilterScript {$_.Bustype -Eq "USB"}
 wmic diskdrive get Name,Model,SerialNumber,Size,Status 
 Get-Partition -DiskNumber 1
 
-$DiskNo = wmic diskdrive get Name
 
 
 #-----------------------------------------------------------------------
-#Look at only local drives
+#Look at only removable drives
 Get-WmiObject -Class Win32_logicaldisk -Filter "DriveType = '2'"
 
 Get-WmiObject -Class Win32_logicaldisk -Filter "DriveType = '2'" | 
@@ -22,7 +21,8 @@ $Disk = Get-WmiObject -Class Win32_logicaldisk -Filter "DriveType = '2'"
 $Disk.GetRelated()
 
 
-# Verify the existence of a Logs directory. If it doesn not exist, create it.
+# checks existence of a Logs directory.
+# Create it if it doesn't exist
 If (-not(Test-Path -Path E:\Logs))
     {
         New-Item -Path E: -Name Logs -ItemType directory
@@ -31,17 +31,16 @@ If (-not(Test-Path -Path E:\Logs))
 # Date and Time
 $today = Get-Date
 $filename = $today.ToString("yyyy-MM-dd")
-# $logFile = "C:\Users\User\Desktop\Logs\EfsDecryptLog_$filename.log"
 $logFile = "E:Logs\EfsDecryptLog_$filename.log"
 
-# Get al logical drives en put the output in a variabele named $drive
+# Get logical drives and dispaly output in variable $drive
 $drive = Get-WmiObject Win32_logicaldisk | Select-Object -ExpandProperty deviceID
 Add-Content $logFile "$today Found the following drives: $drive"
 
 # Let the user know the current status of the script
 Write-Host "scanning all logical drives for encrypted files, please be patient..."
 
-# Create a variable named $encryptedfiles that contains all items on all logical drives with a 'encrypted' attribute set
+# Create a variable $encryptedfiles that contains items on all logical drives with a 'encrypted' attribute set
 
 $encryptedfiles += foreach ($d in $drive) {
 
@@ -52,7 +51,8 @@ $encryptedfiles += foreach ($d in $drive) {
                     }
 
 
-# We will write to the logfile now log the amount of encrypted files and all the encrypted files with full pathname
+# write to the logfile, and log the amount of encrypted files
+# and all the encrypted files with full pathname
 Write-Host "Found $($encryptedfiles.count) encrypted files:"
 Add-Content $logFile "$today Found $($encryptedfiles.count) encrypted files:"
 Add-Content $logFile ""
