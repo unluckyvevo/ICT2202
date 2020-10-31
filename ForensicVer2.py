@@ -10,11 +10,23 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 from PyQt5 import QtWebEngineWidgets
 import cardcredit as cc
+import pcap as pc
 import boto3
 import json
 fDec = boto3.client('frauddetector')
 
 filenameCSV=None
+
+
+
+
+
+
+
+
+
+
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -82,58 +94,85 @@ class Ui_MainWindow(object):
  #Page 2       
  #--------------------------------------------------------------------------            
         self.browse_button = QtWidgets.QPushButton(self.tab)
-        self.browse_button.setGeometry(QtCore.QRect(510, 40, 75, 23))
+        self.browse_button.setGeometry(QtCore.QRect(510, 30, 75, 23))
         self.browse_button.setObjectName("browse_button")
+        self.browse_button.clicked.connect(self.pcapFilePath)
+        
         self.file_path_line = QtWidgets.QLineEdit(self.tab)
-        self.file_path_line.setGeometry(QtCore.QRect(280, 40, 211, 20))
+        self.file_path_line.setGeometry(QtCore.QRect(280, 30, 211, 20))
         self.file_path_line.setObjectName("file_path_line")
+        
         self.lbl_examine = QtWidgets.QLabel(self.tab)
         self.lbl_examine.setGeometry(QtCore.QRect(330, 10, 101, 16))
         self.lbl_examine.setObjectName("lbl_examine")
+        
         self.Submit_btn = QtWidgets.QPushButton(self.tab)
         self.Submit_btn.setGeometry(QtCore.QRect(350, 200, 75, 23))
         self.Submit_btn.setObjectName("Submit_btn")
+        self.Submit_btn.clicked.connect(self.submitPCAP)
+        
         self.Save_to_csv = QtWidgets.QPushButton(self.tab)
         self.Save_to_csv.setGeometry(QtCore.QRect(580, 520, 75, 23))
         self.Save_to_csv.setObjectName("Save_to_csv")
-        self.checkBox = QtWidgets.QCheckBox(self.tab)
-        self.checkBox.setGeometry(QtCore.QRect(460, 90, 81, 17))
-        self.checkBox.setObjectName("checkBox")
-        self.checkBox_2 = QtWidgets.QCheckBox(self.tab)
-        self.checkBox_2.setGeometry(QtCore.QRect(260, 90, 70, 17))
-        self.checkBox_2.setObjectName("checkBox_2")
-        self.checkBox_3 = QtWidgets.QCheckBox(self.tab)
-        self.checkBox_3.setGeometry(QtCore.QRect(260, 120, 131, 17))
-        self.checkBox_3.setObjectName("checkBox_3")
-        self.textBrowser = QtWidgets.QTextBrowser(self.tab)
-        self.textBrowser.setGeometry(QtCore.QRect(0, 230, 791, 291))
-        self.textBrowser.setObjectName("textBrowser")
-        self.lineEdit_3 = QtWidgets.QLineEdit(self.tab)
-        self.lineEdit_3.setGeometry(QtCore.QRect(390, 120, 41, 16))
-        self.lineEdit_3.setObjectName("lineEdit_3")
+        
+        self.checkBox_dest = QtWidgets.QCheckBox(self.tab)
+        self.checkBox_dest.setGeometry(QtCore.QRect(450, 80, 81, 17))
+        self.checkBox_dest.setObjectName("checkBox_dest")
+        
+        self.checkBox_src = QtWidgets.QCheckBox(self.tab)
+        self.checkBox_src.setGeometry(QtCore.QRect(250, 80, 70, 17))
+        self.checkBox_src.setObjectName("checkBox_src")
+        
+        self.checkBox_SinglePkt = QtWidgets.QCheckBox(self.tab)
+        self.checkBox_SinglePkt.setGeometry(QtCore.QRect(260, 120, 131, 17))
+        self.checkBox_SinglePkt.setObjectName("checkBox_SinglePkt")
+        
+        self.textBrowser_PCAP = QtWidgets.QTextBrowser(self.tab)
+        self.textBrowser_PCAP.setGeometry(QtCore.QRect(0, 230, 791, 291))
+        self.textBrowser_PCAP.setObjectName("textBrowser_PCAP")
+        
+        self.lineEdit_singlePacketNo = QtWidgets.QLineEdit(self.tab)
+        self.lineEdit_singlePacketNo.setGeometry(QtCore.QRect(390, 120, 71, 16))
+        self.lineEdit_singlePacketNo.setObjectName("lineEdit_singlePacketNo")
+        
         self.line = QtWidgets.QFrame(self.tab)
         self.line.setGeometry(QtCore.QRect(7, 110, 1111, 20))
         self.line.setFrameShape(QtWidgets.QFrame.HLine)
         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line.setObjectName("line")
+        
         self.checkBox_4 = QtWidgets.QCheckBox(self.tab)
-        self.checkBox_4.setGeometry(QtCore.QRect(310, 60, 201, 17))
+        self.checkBox_4.setGeometry(QtCore.QRect(310, 50, 201, 17))
         self.checkBox_4.setObjectName("checkBox_4")
-        self.lineEdit_2 = QtWidgets.QLineEdit(self.tab)
-        self.lineEdit_2.setGeometry(QtCore.QRect(320, 90, 51, 20))
-        self.lineEdit_2.setObjectName("lineEdit_2")
-        self.lineEdit_4 = QtWidgets.QLineEdit(self.tab)
-        self.lineEdit_4.setGeometry(QtCore.QRect(540, 90, 51, 20))
-        self.lineEdit_4.setObjectName("lineEdit_4")
-        self.label_4 = QtWidgets.QLabel(self.tab)
-        self.label_4.setGeometry(QtCore.QRect(190, 140, 61, 16))
-        self.label_4.setObjectName("label_4")
-        self.radioButton = QtWidgets.QRadioButton(self.tab)
-        self.radioButton.setGeometry(QtCore.QRect(300, 140, 82, 17))
-        self.radioButton.setObjectName("radioButton")
-        self.radioButton_2 = QtWidgets.QRadioButton(self.tab)
-        self.radioButton_2.setGeometry(QtCore.QRect(430, 140, 82, 17))
-        self.radioButton_2.setObjectName("radioButton_2")
+        
+        self.lineEdit_SourceIP = QtWidgets.QLineEdit(self.tab)
+        self.lineEdit_SourceIP.setGeometry(QtCore.QRect(320, 80, 91, 20))
+        self.lineEdit_SourceIP.setObjectName("lineEdit_SourceIP")
+        
+        self.lineEdit_DestIP = QtWidgets.QLineEdit(self.tab)
+        self.lineEdit_DestIP.setGeometry(QtCore.QRect(530, 80, 71, 20))
+        self.lineEdit_DestIP.setObjectName("lineEdit_DestIP")
+        
+        self.label_IsVerbose = QtWidgets.QLabel(self.tab)
+        self.label_IsVerbose.setGeometry(QtCore.QRect(150, 140, 91, 16))
+        self.label_IsVerbose.setObjectName("label_IsVerbose")
+        
+        self.radioButton_Yes = QtWidgets.QRadioButton(self.tab)
+        self.radioButton_Yes.setGeometry(QtCore.QRect(300, 140, 82, 17))
+        self.radioButton_Yes.setObjectName("radioButton_Yes")
+        
+        self.radioButton_No = QtWidgets.QRadioButton(self.tab)
+        self.radioButton_No.setGeometry(QtCore.QRect(430, 140, 82, 17))
+        self.radioButton_No.setObjectName("radioButton_No")
+        
+        self.radioButton_raw = QtWidgets.QRadioButton(self.tab)
+        self.radioButton_raw.setGeometry(QtCore.QRect(510, 140, 82, 17))
+        self.radioButton_raw.setObjectName("radioButton_raw")
+        
+        self.checkBox_SrcDest = QtWidgets.QCheckBox(self.tab)
+        self.checkBox_SrcDest.setGeometry(QtCore.QRect(110, 80, 121, 17))
+        self.checkBox_SrcDest.setObjectName("checkBox_SrcDest")
+        
         self.tabWidget.addTab(self.tab, "")
         
         self.tab_3 = QtWidgets.QWidget()
@@ -197,8 +236,67 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-
-
+    
+    def pcapFilePath(self):
+        pcap_path=QtWidgets.QFileDialog.getOpenFileName(None, 'Single File', '', '*.pcap')
+        self.file_path_line.setText(pcap_path[0])
+        
+        
+    def submitPCAP(self):
+        summary=0
+        pOption=0
+        pOption2=0
+        sIP=dIP=0
+        cbx_SD=0
+        
+        
+        if(self.checkBox_4.isChecked()):
+            summary=1
+       
+        
+        if(self.checkBox_SrcDest.isChecked()):
+            pOption=1
+            if(self.radioButton_Yes.isChecked()):
+                pOption2=0
+            elif(self.radioButton_No.isChecked()):
+                pOption2=1
+            else:
+                pOption2=2
+       
+        
+        if(self.checkBox_SrcDest.isChecked()):
+            cbx_SD=1
+            if(self.lineEdit_SourceIP.text() is None):
+                sIP=0
+            else:
+                sIP=lineEdit_SourceIP.text()
+            if(self.lineEdit_DestIP.text() is None):
+                dIP=0
+            else:
+                dIP=self.lineEdit_DestIP.text()
+        else:
+             cbx_SD=0
+            
+            
+        
+        
+        
+        
+        
+        test=pc.Pkts.getPCAPInfo(self.file_path_line.text(),summary,pOption,pOption2,
+                                 self.lineEdit_singlePacketNo.text(),cbx_SD,sIP,dIP)
+        
+        print("Hi")
+        
+        for i in range(0,len(test)):
+             print("jj")
+             self.textBrowser_PCAP.append(test[i])
+        
+        
+        
+        
+        
+        
     def on_browse(self):
        filename=QtWidgets.QFileDialog.getOpenFileName(None, 'Single File', '', '*.txt')
        print(filename)
@@ -295,13 +393,15 @@ class Ui_MainWindow(object):
         self.lbl_examine.setText(_translate("MainWindow", "Examine PCAP"))
         self.Submit_btn.setText(_translate("MainWindow", "Submit"))
         self.Save_to_csv.setText(_translate("MainWindow", "Save to CSV"))
-        self.checkBox.setText(_translate("MainWindow", "Destination"))
-        self.checkBox_2.setText(_translate("MainWindow", "Source"))
-        self.checkBox_3.setText(_translate("MainWindow", "Show a single packet"))
-        self.checkBox_4.setText(_translate("MainWindow", "Show PCP Summary"))
-        self.label_4.setText(_translate("MainWindow", "Is Verbose?"))
-        self.radioButton.setText(_translate("MainWindow", "Yes"))
-        self.radioButton_2.setText(_translate("MainWindow", "No"))
+        self.checkBox_dest.setText(_translate("MainWindow", "Destination"))
+        self.checkBox_src.setText(_translate("MainWindow", "Source"))
+        self.checkBox_SinglePkt.setText(_translate("MainWindow", "Show a single packet"))
+        self.checkBox_4.setText(_translate("MainWindow", "Show PCAP Summary"))
+        self.label_IsVerbose.setText(_translate("MainWindow", "Is Verbose?"))
+        self.radioButton_Yes.setText(_translate("MainWindow", "Yes"))
+        self.radioButton_No.setText(_translate("MainWindow", "No"))
+        self.checkBox_SrcDest.setText(_translate("MainWindow", "Enable Search ip via"))
+        self.radioButton_raw.setText(_translate("MainWindow", "Raw"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Pcap Analyse"))
         self.browseCSVbtn.setText(_translate("MainWindow", "Browse..."))
         self.btn_ShowReport.setText(_translate("MainWindow", "Submit"))
