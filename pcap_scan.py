@@ -34,6 +34,7 @@ def src_dst(src,dst):
 def packet_raw(value):
     print (hexdump(pkt[value][Raw].load))
 
+#NOT IMPLEMENTED IN GUI, SHOWN IN REPORT ONLY
 #analyse all the packets that are ICMP 
 def analyse_icmp():
     i=0
@@ -64,6 +65,7 @@ def analyse_icmp():
             print (("[*] ICMP Dump : "))
             print (hexdump(ICMPpkt))
 
+#NOT IMPLEMENTED IN GUI, SHOWN IN REPORT ONLY
 #get mac source/destination     
 # *Eth type 2048 = IPv4*
 def analyse_eth():
