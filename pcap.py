@@ -77,15 +77,7 @@ def analyse_eth():
 		print ("[*] Mac Destination : " + pkts.dst)
 		print ("[*] Mac Source : " + pkts.src)
 		print ("[*] Ethernet Type : " + str(pkts.type))
-
-
-def packet_raw():
-    for packet in pkt:
-        if packet.getlayer(Raw):
-            print ('[+] Found Raw' + '\n')
-            l = packet.getlayer(Raw)
-            rawr = Raw(l)
-            hexdump(rawr)   
+ 
 
 
 #packet_summary()
@@ -94,9 +86,10 @@ def packet_raw():
 #packet_proto(82)
 #src_dst("192.168.3.131","209.17.73.30")
 #src_dst(0,0)
-#packet_raw()
+#packet_raw(14260)
 
 #analyse_eth()
 #analyse_icmp()
 #analyse_tcp()
 #analyse_udp()
+
