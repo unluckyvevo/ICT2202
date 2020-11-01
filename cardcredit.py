@@ -42,7 +42,7 @@ class fraudDetector:
         fileNoExtension=fileName.rsplit('.', 1)[0]
 
 # %%
-       
+        plt.figure()
         sns_plot=sns.countplot(x='Class', data=df, palette = 'CMRmap')
         sns_plot.get_figure().savefig("firstGraph_"+fileNoExtension+".png")
       
@@ -53,8 +53,9 @@ class fraudDetector:
       
         #print('Fraud transactions: {}%'.format(round(df.Class.value_counts()[1]/len(df)*100.0,2)))
         arr.append('Fraud transactions: {}%'.format(round(df.Class.value_counts()[1]/len(df)*100.0,2)))
-        
-        arr.append("firstGraph_"+fileNoExtension+".png")
+        arr.append('Imbalanced Class Graph')
+        arr.append('===========================')
+        arr.append("firstGraph_"+fileNoExtension+".png") # 4 
         
         
         
@@ -71,8 +72,10 @@ class fraudDetector:
         ax2 = sns.distplot(df['Amount'], ax=ax2, color='r')
         ax1.set_title('Distribution of Time', fontsize=13)
         ax2.set_title('Distribution of Amount', fontsize=13)
-        plt.savefig("secondGraph_"+fileNoExtension+".png")  
-        arr.append("secondGraph_"+fileNoExtension+".png")
+        plt.savefig("secondGraph_"+fileNoExtension+".png")
+        arr.append('show how skewed the features are:')
+        arr.append('================================')
+        arr.append("secondGraph_"+fileNoExtension+".png") # 7
         
 #null.tpl [markdown]
 # ### Seeing distributions of transaction times and amount, seeing how skewed the features are.
@@ -105,17 +108,33 @@ class fraudDetector:
         x = np.array(df.iloc[:, df.columns != 'Class'])
         y = np.array(df.iloc[:, df.columns == 'Class'])
         x_train, x_test, y_train, y_test = holdout(x, y, test_size=0.2, random_state=0)
+        arr.append(("Transaction Number x_train dataset: "+ str(x_train.shape)))
+        arr.append(("Transaction Number y_train dataset: "+ str(y_train.shape)))
+        arr.append(("Transaction Number x_test dataset: "+ str(x_test.shape)))
+        arr.append(("Transaction Number y_test dataset: "+ str(y_test.shape)))
 
+        arr.append(str("Before OverSampling, counts of label '1': {}".format(sum(y_train==1))))
+        arr.append(str("Before OverSampling, counts of label '0': {} \n".format(sum(y_train==0))))
+        
+        
+        
         sm = SMOTE(random_state=2)
         x_train_s, y_train_s = sm.fit_sample(x_train, y_train.ravel())
+        arr.append(str('After OverSampling, the shape of train_x: {}'.format(x_train_s.shape)))
+        arr.append(str('After OverSampling, the shape of train_y: {} \n'.format(y_train_s.shape)))
+        arr.append(str("After OverSampling, counts of label '1', %: {}".format(sum(y_train_s==1)/len(y_train_s)*100.0,2)))
+        arr.append(str("After OverSampling, counts of label '0', %: {}".format(sum(y_train_s==0)/len(y_train_s)*100.0,2)))
         
+        
+
         sns.countplot(x=y_train_s, data=df, palette='CMRmap')
         labels = ['Non-fraud', 'Fraud']
         
-        plt.savefig("thirdGraph_"+fileNoExtension+".png")
-        
+        plt.savefig("Balanced Dataset_"+fileNoExtension+".png")
+        arr.append('Balanced Dataset')
+        arr.append('================================')
        # arr.append((classification_report(y_test, y_pred, target_names=labels)).to_string())
-        arr.append("thirdGraph_"+fileNoExtension+".png")
+        arr.append("Balanced Dataset_"+fileNoExtension+".png") #20
         
 
 # %%        
@@ -129,13 +148,45 @@ class fraudDetector:
         sns.heatmap(pd.DataFrame(cnf_matrix), annot=True, cmap="YlGnBu", fmt='g')
         plt.ylabel('Actual Label')
         plt.xlabel('Predicted Label')
-        plt.savefig("fourthGraph_"+fileNoExtension+".png")
-        arr.append("fourthGraph_"+fileNoExtension+".png")
-        print("Pass fourth")
+        arr.append('Logistic Regression With SMOTE')
+        arr.append('================================')
+        
+        
+        plt.savefig("LogisticRegressionSMOTE_"+fileNoExtension+".png")
+        arr.append("LogisticRegressionSMOTE_"+fileNoExtension+".png") # 23
+        with open('LogisticRegressionSMOTE.txt', 'w') as f:
+            print(classification_report(y_test, y_pred), file=f)
+        f = open("LogisticRegressionSMOTE.txt", "r")
+        contents=f.read()
+        arr.append(contents)
+        
+        
 
 # %%
+        
         plt.figure()
-        rand_f = rfc(n_estimators=100, min_samples_split=10, min_samples_leaf=1,
+        y_pred_problem = logreg.predict_proba(x_test)[:,1]
+        precision, recall, thresholds = precision_recall_curve(y_test, y_pred_problem)
+        plt.plot(precision, recall)
+        plt.xlabel('Recall')
+        plt.ylabel('Precision')
+        plt.title('Precision Recall Curve')
+        arr.append('By analysing this graph, you can see the model is able to detect huge numbers of fraudulent transactions as the recall is very high from 0.8 -1 but the precision starts to drop at the end of the model, telling us that the model treats non-fraud cases as fraud. This causes mistrust of companies that uses these models, hence its important that the precision must be kept as high as possible.')
+        arr.append('================================')
+        
+        
+        plt.savefig("LogRegprecisionrecallGraph_"+fileNoExtension+".png")
+        arr.append("LogRegprecisionrecallGraph_"+fileNoExtension+".png") # 26
+
+
+
+    
+
+# %%
+        
+        #random Forest
+        plt.figure()
+        rand_f = rfc(n_estimators=1000, min_samples_split=10, min_samples_leaf=1,
            max_features='auto', max_depth=6, verbose=3, max_leaf_nodes=None,
            oob_score=True, n_jobs=-1, random_state=1)
         rand_f.fit(x_train_s, y_train_s)
@@ -145,12 +196,19 @@ class fraudDetector:
         sns.heatmap(pd.DataFrame(cnf_matrix), annot=True, cmap="YlGnBu", fmt='g')
         plt.ylabel('Actual Label')
         plt.xlabel('Predicted Label')
-        print("Pass forest")
         plt.savefig("randomForestHeat_"+fileNoExtension+".png")
-        arr.append("randomForestHeat_"+fileNoExtension+".png")
-        print(classification_report(y_test, y_pred))
-
+        
+        #8
+        
+        arr.append("randomForestHeat_"+fileNoExtension+".png") # 27
+        with open('randomForest_HeatMap.txt', 'w') as f:
+            print(classification_report(y_test, y_pred), file=f)
+        f = open("randomForest_HeatMap.txt", "r")
+        contents=f.read()
+        arr.append(contents) 
+      
 # %%            
+        
         plt.figure()
         y_pred_prob = rand_f.predict_proba(x_test)[:,1]
         precision, recall, thresholds = precision_recall_curve(y_test, y_pred_prob)
@@ -158,28 +216,10 @@ class fraudDetector:
         plt.xlabel('Recall')
         plt.ylabel('Precision')
         plt.title('Precision Recall Curve')
+        arr.append('Random Forest With SMOTE')
+        arr.append('================================')
         plt.savefig("randomForestRecall_"+fileNoExtension+".png")
-        arr.append("randomForestRecall_"+fileNoExtension+".png")
-        #print("Real Gamers denounce Palest")
-        
-
-# %%    
-# =============================================================================
-#         model = xgb.XGBClassifier(n_estimators = 5000, max_depth = 30, learning_rate = 0.01)
-#         model.fit(x_train_s, y_train_s)
-#         y_pred = model.predict(x_test)
-# 
-#         cnf_matrix = confusion_matrix(y_test, y_pred)
-#         sns.heatmap(pd.DataFrame(cnf_matrix), annot=True, cmap="YlGnBu", fmt='g')
-#         plt.ylabel('Actual Label')
-#         plt.xlabel('Predicted Label')
-# 
-#         print(classification_report(y_test, y_pred))
-#         
-#         print("Real Gamers denounce Israel")
-# =============================================================================
-        
-        
+        arr.append("randomForestRecall_"+fileNoExtension+".png") #31
         
         
         
@@ -187,7 +227,7 @@ class fraudDetector:
 # %%         
         return arr
     
-#fraudDetector.getfile(r'creditcard.csv')
+fraudDetector.getfile(r'creditcard.csv')
 
 #null.tpl [markdown]
 # ### Scaling out the time and amount. 
