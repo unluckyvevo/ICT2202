@@ -18,17 +18,6 @@ fDec = boto3.client('frauddetector')
 
 filenameCSV=None
 
-
-
-
-
-
-
-
-
-
-
-
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         font = QtGui.QFont()
@@ -291,34 +280,10 @@ class Ui_MainWindow(object):
         self.tabWidget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
     
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     def pcapFilePath(self):
         pcap_path=QtWidgets.QFileDialog.getOpenFileName(None, 'Single File', '', '*.pcap')
         self.file_path_line.setText(pcap_path[0])
-        
-        
-        
-        
+  
     def is_ipv4(string):
         try:
             ipaddress.IPv4Network(string)
@@ -365,12 +330,7 @@ class Ui_MainWindow(object):
         else:
              cbx_SD=0
             
-            
-        
-        
-        
-        
-        
+   
         test=pc.Pkts.getPCAPInfo(self.file_path_line.text(),summary,pOption,pOption2,
                                  self.lineEdit_singlePacketNo.text(),cbx_SD,sIP,dIP)
         
@@ -378,13 +338,7 @@ class Ui_MainWindow(object):
         
         for i in range(0,len(test)):
              self.textBrowser_PCAP.append(str(test[i]))
-  
-        
-   
-       
-       
-       
-       
+     
     def on_browseCSV(self):
          filenameCSV=QtWidgets.QFileDialog.getOpenFileName(None, 'Single File', '', '*.csv')
          self.file_path_line_2.setText(filenameCSV[0])
@@ -403,8 +357,13 @@ class Ui_MainWindow(object):
          self.textBrowser_2.append(getGraph[1])
          
          for x in range(2,len(getGraph)):
-             self.textBrowser_2.append('<img src="%s" />' %getGraph[x])
+             if(x==4 or x==7 or x==20 or x==23 or x==27 or x==28 or x==32 or x==33 ):
+                 self.textBrowser_2.append('<img src="%s" />' %getGraph[x])
+                 
+             else:
+                 self.textBrowser_2.append(getGraph[x])
              #self.textBrowser_2.append('<img src="%s" />' %getGraph[3])
+         #self.textBrowser_2.append(getGraph[(len(getGraph)-1)])
          
          
     def sentScamCheck(self):
