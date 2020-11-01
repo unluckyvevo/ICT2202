@@ -9,6 +9,16 @@ This app is developed on Python3.9.0 (Release Date: Oct. 5, 2020) so we should i
 1. `sudo add-apt-repository ppa:deadsnakes/ppa`
 1. `sudo apt update`
 1. `sudo apt install python3.9`
+## AWS Command Line Interface
+The AWS Command Line Interface (CLI) is a unified tool to manage AWS services.A setup is required to use the Amazon Fraud Detector.
+To do so:
+1. Install AWS Command Line Interface from `https://aws.amazon.com/cli/`
+2. From CMD locate the AmazonCLI download folder and run `aws configure`
+3.Enter the access key `AKIAI3YBCUOIK43XPIQQ` when prompt
+4.Enter the secret access key `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`  when prompted
+5.Enter `ap-southeast-1` when prompt
+6.Enter `text` when prompt
+
 
 ## Qt Creator
 Qt Creator is a cross-platform, integrated development environment (IDE) for application developers to create applications for multiple desktop, embedded, and mobile device platforms.
