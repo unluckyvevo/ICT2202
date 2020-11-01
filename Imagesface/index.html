@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+        div.gallery {
+            margin: 5px;
+            border: 1px solid #ccc;
+            float: left;
+            width: 200px;
+        }
+        div.gallery:hover {
+            border: 1px solid #777;
+        }
+        div.gallery img {
+            width: 100%;
+            height: auto;
+        }
+        div.desc {
+            padding: 10px;
+            text-align: center;
+            font-size: 12px
+        }
+        div.source img {
+            width: 200px;
+            height: auto;
+        }
+    </style> 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.85.0.min.js"></script>
+    <script>
+    $(document).ready(function(){
+        AWS.config.region = 'us-east-1';
+        AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+            IdentityPoolId: 'us-east-1:b999e0dc-8fba-43ce-a2f9-fd07e38342a6', //obtain browser script using identityPoolID
+        });
+        var s3 = new AWS.S3({
+            apiVersion: '2006-03-01',
+            params: {Bucket: 'face-scanning'} // S3 Bucket name for face scanning to compare images
+        });
+        var lambda = new AWS.Lambda({apiVersion: '2015-03-31'});
+        console.log(s3);
+        $('#comparephoto').click(function(event) {
+            var files = $('#photoupload').prop('files'); // the file name that I want to upload to compare face to
+            if (!files.length) {
+               return alert('Please choose a file to upload!');
+            }
+            var file = files[0]; 
+            var creditcardid = $("#creditcardid").val(); // get employee id 
+            if (creditcardid == "") {
+                return alert('Please enter your creditcard id!');
+            }
+            s3.upload({
+                Key: file.name,
+                Body: file, 
+                ACL: 'public-read'
+            }, function(err, data) {
+                if (err) {
+                    return alert('Error uploading photo: ', err.message);
+                } else {
+                    //successfully uploaded photo
+                    var lambdaInput = { filename: file.name, creditcardid: creditcardid } // input
+                    var lambdaParams = {
+                        FunctionName: 'verifyfaces',
+                        InvocationType: 'RequestResponse', // invoke a request response type
+                        Payload: JSON.stringify(lambdaInput) // pass the function into the 
+                    };
+                    lambda.invoke(lambdaParams, function(err, data) { //response comes back in the data
+                        if (err) {
+                            return alert('Error invoking lambda: ', err.message);
+                        } else {
+                            $('#result').empty();
+                            if (data != null && data.Payload != null) { // output data.payload parameter
+                                var output = JSON.parse(data.Payload);
+                                if (output.result !== null) {
+                                    var imageurl = 'https://s3.amazonaws.com/face-idface/' + creditcardid + '.jpg';
+                                    var htmlelements = [
+                                    '<div><b>' + output.result + '</b></div>',
+                                    '<div><img src ="' + output.result + '.jpg" /></div>', // display the face accordingly. If it is green, then it is a match
+                                    '<div class="gallery">',
+                                    '<a target="_blank" href="' + imageurl + '"><img src="' + imageurl +'"/></a>', // if not its not a match
+                                    '</div>'
+                                    ]
+                                    var img = gethtml(htmlelements);
+                                    $(img).appendTo('#result');
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+        });
+        function gethtml(elements) {
+          return elements.join('\n');
+        }
+        $('#photoupload').on("change", function(e){ 
+           $('#picture').attr('src',URL.createObjectURL(e.target.files[0]));
+           $('#result').empty();
+        });
+    });
+  </script>
+  </head>
+  <body>
+    <h1>Credit Card Face Based Verification Check</h1>
+    <div>
+        Credit Card No.:
+        <input id="creditcardid" type="text" />
+        Please Insert Face Image: 
+        <input id="photoupload" type="file" accept="image/*">
+        <button id="comparephoto">Click here to compare Faces, wait for a few seconds after that!</button>
+        <br/><br/>
+        <div class="source"><img id="picture"/></div>
+    </div>
+    <hr/>
+    <br/>
+    <div id="result">
+    </div>
+  </body>
+</html>
