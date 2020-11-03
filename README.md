@@ -14,7 +14,7 @@ The AWS Command Line Interface (CLI) is a unified tool to manage AWS services.A 
 To do so:
 1. Install AWS Command Line Interface from `https://aws.amazon.com/cli/`
 2. From CMD locate the AmazonCLI download folder and run `aws configure`
-3. Enter the access key `AKIAI3YBCUOIK43XPIQQ` when prompt
+3. Enter the access key `(Insert your own key here)` when prompt
 4. Enter the secret access key `Ekzt+sCWZ68GfSFw4OeP9QtdD72hWcKlecwRIuSb`  when prompted
 5. Enter `ap-southeast-1` when prompt
 6. Enter `text` when prompt
